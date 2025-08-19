@@ -15,7 +15,7 @@ def preprocess_data(df):
     df['price'] = df['price'].astype(float)
 
     if 'case_diameter' in df.columns:
-        df['case_diameter'] = df['case_diameter'].astype(str).str.extract('(\d+\.?\d*)').astype(float)
+        df['case_diameter'] = df['case_diameter'].astype(str).str.extract(r'(\d+\.?\d*)').astype(float)
 
     #Handle features column as it has multiple strings
     if 'features' in df.columns:

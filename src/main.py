@@ -4,7 +4,7 @@ from preprocessing import preprocess_data
 
 if __name__ == "__main__":
     # Define the path to your raw data file
-    file_path = "watch_data.csv" 
+    file_path = "D:\ReWatch\data\processed\watch_data.csv" 
 
     # Step 1: Load the raw data using your existing data_loader
     raw_df = load_data(file_path)
