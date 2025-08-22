@@ -1,6 +1,7 @@
 # main.py
 from data_loader import load_data
 from preprocessing import preprocess_data
+from recommender import create_feature_matrix, recommend_watches
 
 if __name__ == "__main__":
     # Define the path to your raw data file
@@ -19,5 +20,31 @@ if __name__ == "__main__":
             preprocessed_df.info()
             print("\nFirst 5 rows of preprocessed data:")
             print(preprocessed_df.head())
+
+            #Step 3 Create the feature matrix and train transformers
+            #Needed for both training and making predictions
+            feature_matrix, scaler, encoder, tfidf = create_feature_matrix(preprocessed_df)
+            print("Feature matrix created successfully.")
+
+            #Step 4 Define user preferences for a recommendation
+            user_preferences = {
+                'brand': 'Tissot',
+                'style': 'dress',
+                'movement': 'automatic',
+                'case_diameter': '40',
+                'strap_material': 'leather',
+                'price': '50000',
+                'water_resistance': '100',
+                'features': 'Date Display, Sapphire Crystal'
+            }
+
+            #Step 5 Get and print recommendations
+            recommendations = recommend_watches(user_preferences, preprocessed_df, feature_matrix, scaler, encoder, tfidf)
+
+            print("\nBased on your preferences, we recommend these watches:")
+            #REsults in readable form
+            print(recommendations[['brand', 'model', 'price', 'style', 'features']].to_string())
+            
+
     else:
         print("Failed to load data. Exiting.")
