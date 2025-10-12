@@ -26,17 +26,30 @@ if __name__ == "__main__":
             feature_matrix, scaler, encoder, tfidf = create_feature_matrix(preprocessed_df)
             print("Feature matrix created successfully.")
 
-            #Step 4 Define user preferences for a recommendation
-            user_preferences = {
-                'brand': 'Tissot',
-                'style': 'dress',
-                'movement': 'automatic',
-                'case_diameter': '40',
-                'strap_material': 'leather',
-                'price': '50000',
-                'water_resistance': '100',
-                'features': 'Date Display, Sapphire Crystal'
-            }
+            # Step 4: Prompt user for preferences
+            def get_user_preferences():
+                print("Please enter your watch preferences (press Enter to skip any):")
+                brand = input("Brand: ")
+                style = input("Style: ")
+                movement = input("Movement: ")
+                case_diameter = input("Case Diameter (mm): ")
+                strap_material = input("Strap Material: ")
+                price = input("Price: ")
+                water_resistance = input("Water Resistance (meters): ")
+                features = input("Features (comma-separated): ")
+
+                return {
+                    'brand': brand,
+                    'style': style,
+                    'movement': movement,
+                    'case_diameter': case_diameter,
+                    'strap_material': strap_material,
+                    'price': price,
+                    'water_resistance': water_resistance,
+                    'features': features
+                }
+            
+            user_preferences = get_user_preferences()
 
             #Step 5 Get and print recommendations
             recommendations = recommend_watches(user_preferences, preprocessed_df, feature_matrix, scaler, encoder, tfidf)
