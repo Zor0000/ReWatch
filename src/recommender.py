@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 from sklearn.preprocessing import StandardScaler, OneHotEncoder
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
@@ -52,22 +53,30 @@ def recommend_watches(user_input, df, feature_matrix, scaler, encoder, tfidf):
     Returns:
         pd.DataFrame: A DataFrame of the top N recommended watches.
     """
-
-    # Create a user preference DataFrame from input
     user_df = pd.DataFrame([user_input])
 
-    # Preprocess user input (lowercase and numerical conversion)
-    user_df['style'] = user_df['style'].str.lower()
-    user_df['movement'] = user_df['movement'].str.lower()
-    user_df['strap_material'] = user_df['strap_material'].str.lower()
-    user_df['case_diameter'] = float(user_df['case_diameter'])
-    user_df['price'] = float(user_df['price'])
-    user_df['water_resistance'] = float(user_df['water_resistance'])
-    user_df['features'] = user_df['features'].str.lower().str.split(',').apply(lambda x: [f.strip() for f in x])
+    # Handle empty categorical/text input
+    for col in ['brand', 'style', 'movement', 'strap_material']:
+        val = user_df[col].iloc[0]
+        user_df[col] = val.lower() if val not in ['', None] else ''
+
+    # Handle empty numerical input
+    for col in ['case_diameter', 'price', 'water_resistance']:
+        val = user_df[col].iloc[0]
+        user_df[col] = float(val) if val not in ['', None] else np.nan
+
+    # Handle empty features input
+    features_val = user_df['features'].iloc[0]
+    if features_val not in ['', None]:
+        # Only apply .lower() and .split(',') if it's a string
+        user_df['features'] = [f.strip().lower() for f in features_val.split(',')]
+    else:
+        user_df['features'] = ['']
 
     # Transform user input using the same trained objects as the original data
     user_encoded = encoder.transform(user_df[['brand', 'style', 'movement', 'strap_material']])
     user_scaled = scaler.transform(user_df[['case_diameter', 'water_resistance', 'price']])
+    user_scaled = np.nan_to_num(user_scaled, nan=0.0)  # Replace NaN with 0.0
     user_tfidf = tfidf.transform(user_df['features'].apply(lambda x: ' '.join(x)))
 
     # Combine user features into a single vector
