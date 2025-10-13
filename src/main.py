@@ -15,11 +15,11 @@ if __name__ == "__main__":
         preprocessed_df = preprocess_data(raw_df)
 
         if preprocessed_df is not None:
-            print("Data has been successfully loaded and preprocessed.")
-            print("\nPreprocessed Data Info:")
+            # print("Data has been successfully loaded and preprocessed.")
+            # print("\nPreprocessed Data Info:")
             preprocessed_df.info()
-            print("\nFirst 5 rows of preprocessed data:")
-            print(preprocessed_df.head())
+            # print("\nFirst 5 rows of preprocessed data:")
+            # print(preprocessed_df.head())
 
             #Step 3 Create the feature matrix and train transformers
             #Needed for both training and making predictions
