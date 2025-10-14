@@ -1,63 +1,43 @@
-# main.py
+# main.py (MODIFIED)
 from data_loader import load_data
 from preprocessing import preprocess_data
-from recommender import create_feature_matrix, recommend_watches
+from recommender import create_feature_matrix, recommend_watches # Note: No change to imports
 
 if __name__ == "__main__":
     # Define the path to your raw data file
     file_path = "D:\ReWatch\data\processed\watch_data.csv" 
 
-    # Step 1: Load the raw data using your existing data_loader
+    # Step 1 & 2: Load and Preprocess
     raw_df = load_data(file_path)
-
     if raw_df is not None:
-        # Step 2: Preprocess the loaded data
         preprocessed_df = preprocess_data(raw_df)
 
         if preprocessed_df is not None:
-            # print("Data has been successfully loaded and preprocessed.")
-            # print("\nPreprocessed Data Info:")
             preprocessed_df.info()
-            # print("\nFirst 5 rows of preprocessed data:")
-            # print(preprocessed_df.head())
-
+            
             #Step 3 Create the feature matrix and train transformers
-            #Needed for both training and making predictions
             feature_matrix, scaler, encoder, tfidf = create_feature_matrix(preprocessed_df)
             print("Feature matrix created successfully.")
 
-            # Step 4: Prompt user for preferences
-            def get_user_preferences():
-                print("Please enter your watch preferences (press Enter to skip any):")
-                brand = input("Brand: ")
-                style = input("Style: ")
-                movement = input("Movement: ")
-                case_diameter = input("Case Diameter (mm): ")
-                strap_material = input("Strap Material: ")
-                price = input("Price: ")
-                water_resistance = input("Water Resistance (meters): ")
-                features = input("Features (comma-separated): ")
-
-                return {
-                    'brand': brand,
-                    'style': style,
-                    'movement': movement,
-                    'case_diameter': case_diameter,
-                    'strap_material': strap_material,
-                    'price': price,
-                    'water_resistance': water_resistance,
-                    'features': features
-                }
+            # Step 4: Prompt user for a single preference sentence
+            def get_user_query():
+                print("\nPlease enter your watch preferences as a sentence:")
+                # Changed from multiple inputs to a single text query
+                query = input("Query: ") 
+                return query
             
-            user_preferences = get_user_preferences()
+            # The variable now holds a single string (the query)
+            user_query = get_user_query() 
 
-            #Step 5 Get and print recommendations
-            recommendations = recommend_watches(user_preferences, preprocessed_df, feature_matrix, scaler, encoder, tfidf)
+            # Step 5: Get and print recommendations
+            # Pass the single string query to the recommend_watches function
+            recommendations = recommend_watches(user_query, preprocessed_df, feature_matrix, scaler, encoder, tfidf)
 
-            print("\nBased on your preferences, we recommend these watches:")
-            #REsults in readable form
+            print("\nBased on your query, we recommend these watches:")
+            # Results in readable form
             print(recommendations[['brand', 'model', 'price', 'style', 'features']].to_string())
             
-
+        else:
+            print("Failed to preprocess data. Exiting.")
     else:
         print("Failed to load data. Exiting.")
