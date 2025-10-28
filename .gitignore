@@ -13,3 +13,6 @@ env/
 *.log
 
 *.nbconvert.ipynb
+
+#Notebooks
+test.ipynb
